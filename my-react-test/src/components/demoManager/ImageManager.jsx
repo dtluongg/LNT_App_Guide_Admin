@@ -4,7 +4,7 @@ import {
   getImagesByContent,
   updateImage,
   deleteImage
-} from "../api/images";
+} from "../../api/images";
 
 const ImageManager = ({ contentId }) => {
   const [file, setFile] = useState(null);

@@ -1,3 +1,5 @@
+//src/components/category/admin/AdminCategoryContainer.jsx
+
 import React, { useEffect, useState } from "react";
 import { categoryService } from "../../../services/categoryService";
 import { buildCategoryTree, filterCategories } from "../shared/categoryHelper";
@@ -6,10 +8,11 @@ import AdminCategoryList from "./AdminCategoryList";
 import AdminCategoryForm from "./AdminCategoryForm";
 import { categoryColors } from "../shared/categoryStyle";
 
-export default function AdminCategoryContainer({ moduleId, onSelectCategory }) {
+export default function AdminCategoryContainer({ moduleId, onSelectCategory, nameModuleSelected, iconModuleSelected }) {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [search, setSearch] = useState("");
+  console.log(nameModuleSelected);
 
   // State edit
   const [editState, setEditState] = useState({
@@ -134,7 +137,11 @@ export default function AdminCategoryContainer({ moduleId, onSelectCategory }) {
     <aside className={categoryColors.listStyle}>
       {/* --- Header + Search cố định --- */}
       <div className="sticky top-0 bg-white z-10 pb-2 border-b">
-        <h2 className="text-lg font-semibold text-gray-700 mb-2">📂 Category Management</h2>
+        <div className="flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium rounded-md transition ">
+          <i className={`${iconModuleSelected} text-sm`}></i>
+          <h2 className="text-lg font-semibold text-gray-700 mb-2">{nameModuleSelected}</h2>
+        </div>
+
         <CategorySearchBox value={search} onChange={setSearch} />
       </div>
 

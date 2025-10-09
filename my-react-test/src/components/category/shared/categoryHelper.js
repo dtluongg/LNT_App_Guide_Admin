@@ -1,4 +1,4 @@
-// utils/categoryHelper.js
+// src/components/category/shared/categoryHelper.js
 // ✅ Xây dựng cây category nhiều cấp (level không giới hạn)
 export function buildCategoryTree(categories) {
   // Tạo map id → category có children

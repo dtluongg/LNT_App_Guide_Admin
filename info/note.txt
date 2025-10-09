@@ -1,7 +1,10 @@
 xong category 3 level,
 cần:
-- thêm truyền tên module vào header.
-- button click đóng mở list category. 
+- thêm truyền tên module vào header. (xong)
+- Làm lại cho userCategoryList với phân lóp (xong)
+
+
+- button click đóng mở list category và module. (đóng thì zoom to khu vực content)
 - tách lớp cho content
 - content chưa lưu đc định dạng html cho các chức năng editext.
 - upload image ko cần nhập tên

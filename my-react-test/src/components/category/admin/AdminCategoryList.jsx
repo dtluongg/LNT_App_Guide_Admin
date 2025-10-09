@@ -1,4 +1,4 @@
-// components/category/admin/AdminCategoryList.jsx
+// src/components/category/admin/AdminCategoryList.jsx
 
 import React from "react";
 import AdminCategoryItem from "./AdminCategoryItem";
@@ -51,3 +51,5 @@ export default function AdminCategoryList({
 
   return <ul className="space-y-2">{tree.map((cat) => renderCategory(cat))}</ul>;
 }
+
+

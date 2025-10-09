@@ -1,3 +1,5 @@
+// src/components/category/admin/AdminCategoryForm.jsx
+
 import React from "react";
 
 export default function AdminCategoryForm({

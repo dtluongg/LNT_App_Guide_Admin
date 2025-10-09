@@ -1,69 +1,65 @@
 import { useEffect, useState } from "react";
-import { contentService } from "../services/contentService";
+import { moduleService } from "../../services/moduleService";
 
-export default function ContentManager({ categoryId }) {
-  const [contents, setContents] = useState([]);
-  const [newContent, setNewContent] = useState({ title: "", html_content: "" });
+export default function ModuleManager() {
+  const [modules, setModules] = useState([]);
+  const [newModule, setNewModule] = useState({ name: "", icon: "" });
   const [editing, setEditing] = useState(null);
   const [detail, setDetail] = useState(null);
 
-  const loadContents = async () => {
-    if (!categoryId) return;
-    setContents(await contentService.list(categoryId));
+  const loadModules = async () => {
+    setModules(await moduleService.list());
   };
 
   useEffect(() => {
-    loadContents();
-  }, [categoryId]);
+    loadModules();
+  }, []);
 
   const handleCreate = async () => {
-    if (!newContent.title.trim()) return alert("Title required!");
-    await contentService.create({ ...newContent, category_id: categoryId });
-    setNewContent({ title: "", html_content: "" });
-    loadContents();
+    if (!newModule.name.trim()) return alert("Name required!");
+    await moduleService.create(newModule);
+    setNewModule({ name: "", icon: "" });
+    loadModules();
   };
 
   const handleUpdate = async (id) => {
-    await contentService.update(id, editing);
+    await moduleService.update(id, editing);
     setEditing(null);
-    loadContents();
+    loadModules();
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Delete this content?")) {
-      await contentService.remove(id);
-      loadContents();
+    if (window.confirm("Delete this module?")) {
+      await moduleService.remove(id);
+      loadModules();
     }
   };
 
   const handleDetail = async (id) => {
-    setDetail(await contentService.detail(id));
+    setDetail(await moduleService.detail(id));
   };
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      <h2 className="text-xl font-bold mb-4">📝 Contents Manager</h2>
+      <h2 className="text-2xl font-bold mb-4">📦 Modules Manager</h2>
 
-      {/* Form thêm content */}
+      {/* Form thêm module */}
       <div className="flex gap-2 mb-6">
         <input
           type="text"
-          placeholder="Title"
-          value={newContent.title}
+          placeholder="Module name"
+          value={newModule.name}
           onChange={(e) =>
-            setNewContent((prev) => ({ ...prev, title: e.target.value }))
+            setNewModule((prev) => ({ ...prev, name: e.target.value }))
           }
           className="border rounded px-2 py-1 flex-1"
         />
         <input
           type="text"
-          placeholder="HTML Content"
-          value={newContent.html_content}
+          placeholder="Icon"
+          value={newModule.icon}
           onChange={(e) =>
-            setNewContent((prev) => ({
-              ...prev,
-              html_content: e.target.value,
-            }))
+            setNewModule((prev) => ({ ...prev, icon: e.target.value }))
           }
           className="border rounded px-2 py-1 flex-1"
         />
@@ -75,34 +71,31 @@ export default function ContentManager({ categoryId }) {
         </button>
       </div>
 
-      {/* Danh sách contents */}
+      {/* Danh sách modules */}
       <ul className="space-y-3">
-        {contents.map((c) => (
+        {modules.map((m) => (
           <li
-            key={c.id}
+            key={m.id}
             className="flex items-center justify-between border p-3 rounded"
           >
-            {editing?.id === c.id ? (
+            {editing?.id === m.id ? (
               <div className="flex gap-2 flex-1">
                 <input
-                  value={editing.title}
+                  value={editing.name}
                   onChange={(e) =>
-                    setEditing((prev) => ({ ...prev, title: e.target.value }))
+                    setEditing((prev) => ({ ...prev, name: e.target.value }))
                   }
                   className="border rounded px-2 py-1 flex-1"
                 />
                 <input
-                  value={editing.html_content || ""}
+                  value={editing.icon}
                   onChange={(e) =>
-                    setEditing((prev) => ({
-                      ...prev,
-                      html_content: e.target.value,
-                    }))
+                    setEditing((prev) => ({ ...prev, icon: e.target.value }))
                   }
                   className="border rounded px-2 py-1 flex-1"
                 />
                 <button
-                  onClick={() => handleUpdate(c.id)}
+                  onClick={() => handleUpdate(m.id)}
                   className="bg-blue-600 text-white px-2 py-1 rounded"
                 >
                   💾 Save
@@ -111,23 +104,24 @@ export default function ContentManager({ categoryId }) {
             ) : (
               <>
                 <span className="flex-1">
-                  <b>{c.title}</b>
+                  {m.icon && <i className={`mr-2 ${m.icon}`}></i>}
+                  <b>{m.name}</b>
                 </span>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => handleDetail(c.id)}
+                    onClick={() => handleDetail(m.id)}
                     className="text-indigo-600 hover:underline"
                   >
                     👁 View
                   </button>
                   <button
-                    onClick={() => setEditing(c)}
+                    onClick={() => setEditing(m)}
                     className="text-blue-600 hover:underline"
                   >
                     ✏ Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(c.id)}
+                    onClick={() => handleDelete(m.id)}
                     className="text-red-600 hover:underline"
                   >
                     🗑 Delete
@@ -139,10 +133,10 @@ export default function ContentManager({ categoryId }) {
         ))}
       </ul>
 
-      {/* Chi tiết content */}
+      {/* Chi tiết module */}
       {detail && (
         <div className="mt-6 border p-4 rounded bg-gray-50">
-          <h3 className="text-lg font-bold mb-2">📋 Content Detail</h3>
+          <h3 className="text-lg font-bold mb-2">📋 Module Detail</h3>
           <pre className="text-sm">{JSON.stringify(detail, null, 2)}</pre>
         </div>
       )}

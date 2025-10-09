@@ -30,12 +30,15 @@ const App = () => {
           <AdminCategoryContainer
             moduleId={activeModule?.id}
             onSelectCategory={setActiveCategory}
+            nameModuleSelected={activeModule?.name}
+            iconModuleSelected={activeModule?.icon}
           />
         ) : (
           <UserCategoryList
             moduleId={activeModule?.id}
             onSelectCategory={setActiveCategory}
             titleCategorySelected={setTitleCategory}
+            nameModuleSelected={activeModule?.name}
           />
         )}
 

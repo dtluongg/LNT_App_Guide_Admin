@@ -1,4 +1,4 @@
-// components/category/admin/AdminCategoryItem.jsx
+// src/components/category/admin/AdminCategoryItem.jsx
 
 import React from "react";
 
@@ -139,3 +139,5 @@ export default function AdminCategoryItem({
         </div>
     );
 }
+
+
