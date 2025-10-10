@@ -39,6 +39,7 @@ const App = () => {
             onSelectCategory={setActiveCategory}
             titleCategorySelected={setTitleCategory}
             nameModuleSelected={activeModule?.name}
+            iconModuleSelected={activeModule?.icon}
           />
         )}
 

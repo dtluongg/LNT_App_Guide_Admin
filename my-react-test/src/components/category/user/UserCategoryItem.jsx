@@ -9,6 +9,7 @@ export default function UserCategoryItem({
   onSelect,
   toggleParent,
   styles,
+  search = "",
 }) {
   let baseStyle;
 
@@ -20,17 +21,50 @@ export default function UserCategoryItem({
     else baseStyle = styles.level3Color;
   }
 
+  // ✅ Hàm tô màu phần trùng với search
+  const highlightMatch = (text, query) => {
+    if (!query) return text;
+    const lowerText = text.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+
+    const parts = [];
+    let lastIndex = 0;
+    let index;
+
+    while ((index = lowerText.indexOf(lowerQuery, lastIndex)) !== -1) {
+      if (index > lastIndex) {
+        parts.push(text.slice(lastIndex, index));
+      }
+      parts.push(
+        <mark
+          key={index}
+          className="bg-yellow-200 text-gray-900 rounded px-0.5"
+        >
+          {text.slice(index, index + query.length)}
+        </mark>
+      );
+      lastIndex = index + query.length;
+    }
+
+    if (lastIndex < text.length) {
+      parts.push(text.slice(lastIndex));
+    }
+
+    return parts;
+  };
+
   return (
     <div
       className={`px-3 py-2 text-sm font-medium rounded-md cursor-pointer transition flex justify-between items-center ${baseStyle}`}
       onClick={() => onSelect(category.id, category.title)}
     >
-      {/* Left: title */}
       <div className="flex items-center gap-2 flex-1">
-        <span className="truncate">{category.title}</span>
+        {/* ✅ Hiển thị title với highlight */}
+        <span className="truncate">
+          {highlightMatch(category.title, search)}
+        </span>
       </div>
 
-      {/* Right: toggle icon */}
       {hasChildren && (
         <span
           className="ml-1 text-xs text-gray-600 hover:text-gray-800"

@@ -9,6 +9,8 @@ export default function UserCategoryList({
   moduleId,
   onSelectCategory,
   titleCategorySelected,
+  nameModuleSelected,
+  iconModuleSelected,
 }) {
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState("");
@@ -76,6 +78,7 @@ export default function UserCategoryList({
         onSelect={handleSelect}
         toggleParent={() => toggleParent(category.id)}
         styles={categoryColors}
+        search={search}
       />
       {openParents[category.id] && category.children?.length > 0 && (
         <ul className="mt-1 space-y-1">
@@ -89,9 +92,10 @@ export default function UserCategoryList({
     <aside className={categoryColors.listStyle}>
       {/* Header + Search */}
       <div className="sticky top-0 bg-white z-10 pb-2 border-b">
-        <h2 className="text-lg font-semibold text-gray-700 mb-2 flex items-center">
-          📖 Categories
-        </h2>
+        <div className="flex items-center gap-2 mb-2 px-2.5 py-1.5 text-xl font-medium rounded-md transition text-blue-800 border-blue-200 hover:bg-blue-200 hover:border-blue-400">
+          <i className={`${iconModuleSelected} text-xl`}></i>
+          <h2>{nameModuleSelected}</h2>
+        </div>
         <CategorySearchBox value={search} onChange={setSearch} />
       </div>
 

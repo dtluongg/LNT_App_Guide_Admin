@@ -1,21 +1,23 @@
 // src/components/ContentViewer.jsx
-import React, { useEffect, useState } from 'react';
-import ReactQuill from 'react-quill-new';
-import 'react-quill-new/dist/quill.snow.css';
+import React, { useEffect, useState } from "react";
+import ReactQuill from "react-quill-new";
+
+
 
 import {
   getContentsByCategory,
   createContent,
   updateContent,
   deleteContent,
-} from '../api/contents';
+} from "../api/contents";
 import {
   getImagesByContent,
   uploadImage,
   updateImage,
   deleteImage,
-} from '../api/images';
-import { IMAGE_BASE_URL } from '../config/config';
+} from "../api/images";
+import { IMAGE_BASE_URL } from "../config/config";
+import { quillModules, quillFormats } from "../config/quillConfigWordLike";
 
 const ContentViewer = ({ categoryId, titleCategory }) => {
   const [contents, setContents] = useState([]);
@@ -28,16 +30,19 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
   const [newHtml, setNewHtml] = useState("");
 
   // state cho edit content
-  const [editTitle, setEditTitle] = useState('');
+  const [editTitle, setEditTitle] = useState("");
   const [editOrder, setEditOrder] = useState(0);
   const [editActive, setEditActive] = useState(true);
 
   // state cho create content
-  const [newTitle, setNewTitle] = useState('');
+  const [newTitle, setNewTitle] = useState("");
   const [newActive, setNewActive] = useState(true);
 
   // state cho upload/update ảnh
   const [pendingImage, setPendingImage] = useState({});
+
+  // state cho on/off new content editor:
+  const [showNewContentForm, setShowNewContentForm] = useState(false);
 
   useEffect(() => {
     if (categoryId) {
@@ -84,13 +89,13 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
       category_id: categoryId,
       title: newTitle,
       html_content: newHtml,
-      plain_content: newHtml.replace(/<[^>]+>/g, ''),
+      plain_content: newHtml.replace(/<[^>]+>/g, ""),
       is_published: newActive,
       order_index: maxOrder + 1,
     });
 
-    setNewHtml('');
-    setNewTitle('');
+    setNewHtml("");
+    setNewTitle("");
     setNewActive(true);
     await loadContents();
   };
@@ -100,7 +105,7 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
     await updateContent(id, {
       title: editTitle,
       html_content: editHtml,
-      plain_content: editHtml.replace(/<[^>]+>/g, ''),
+      plain_content: editHtml.replace(/<[^>]+>/g, ""),
       is_published: editActive,
       order_index: editOrder,
     });
@@ -111,7 +116,7 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
 
   // Xoá content
   const handleDelete = async (id) => {
-    if (window.confirm('Bạn có chắc muốn xoá content này?')) {
+    if (window.confirm("Bạn có chắc muốn xoá content này?")) {
       await deleteContent(id);
       await loadContents();
     }
@@ -121,11 +126,11 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
   // Upload ảnh mới
   const handleUpload = async (contentId, file, caption) => {
     if (!file) {
-      alert('Vui lòng chọn file trước khi upload!');
+      alert("Vui lòng chọn file trước khi upload!");
       return;
     }
 
-    await uploadImage(contentId, file, caption || 'image');
+    await uploadImage(contentId, file, caption || "image");
     await fetchImages(contentId);
 
     // reset state
@@ -138,11 +143,11 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
   // Update ảnh
   const handleUpdateImage = async (imageId, file, caption, contentId) => {
     if (!file && !caption) {
-      alert('Vui lòng chọn file hoặc nhập caption để cập nhật!');
+      alert("Vui lòng chọn file hoặc nhập caption để cập nhật!");
       return;
     }
 
-    await updateImage(imageId, contentId, file, caption || 'image');
+    await updateImage(imageId, contentId, file, caption || "image");
     await fetchImages(contentId);
 
     // reset state
@@ -158,8 +163,8 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
     const index = sorted.findIndex((c) => c.id === content.id);
     let swapWith = null;
 
-    if (direction === 'up' && index > 0) swapWith = sorted[index - 1];
-    if (direction === 'down' && index < sorted.length - 1)
+    if (direction === "up" && index > 0) swapWith = sorted[index - 1];
+    if (direction === "down" && index < sorted.length - 1)
       swapWith = sorted[index + 1];
 
     if (!swapWith) return;
@@ -169,54 +174,56 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
     await loadContents();
   };
 
+  
+
   if (!categoryId) {
-    return <p className='p-4 text-gray-500'>Please select a category</p>;
+    return <p className="p-4 text-gray-500">Please select a category</p>;
   }
 
   return (
-    <div className='flex-1 p-6 overflow-y-auto h-full'>
-      <h2 className='text-xl font-bold mb-6 text-gray-800'>{titleCategory}</h2>
+    <div className="flex-1 p-6 overflow-y-auto h-full">
+      <h2 className="text-xl font-bold mb-6 text-gray-800">{titleCategory}</h2>
 
       {/* Danh sách content */}
-      <div className='space-y-4'>
+      <div className="space-y-4">
         {contents.map((c) => {
           const isOpen = openItems[c.id];
           const isEditing = editing === c.id;
 
           return (
-            <div key={c.id} className='bg-white rounded-md shadow-sm p-3'>
+            <div key={c.id} className="bg-white rounded-md shadow-sm p-3">
               {/* Header */}
-              <div className='flex justify-between items-center'>
+              <div className="flex justify-between items-center">
                 <button
                   onClick={() => toggleItem(c.id)}
                   className={`px-3 py-1 rounded-md text-sm font-medium transition
                     ${
                       isOpen
-                        ? 'bg-blue-200 text-blue-800'
-                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                        ? "bg-blue-200 text-blue-800"
+                        : "bg-gray-100 hover:bg-gray-200 text-gray-700"
                     }`}
                 >
                   {c.title}
                 </button>
-                <div className='flex gap-2'>
+                <div className="flex gap-2">
                   <button
-                    onClick={() => handleMove(c, 'up')}
+                    onClick={() => handleMove(c, "up")}
                     disabled={
                       contents.sort((a, b) => a.order_index - b.order_index)[0]
                         ?.id === c.id
                     }
-                    className='text-gray-500 hover:text-black text-sm disabled:opacity-30'
+                    className="text-gray-500 hover:text-black text-sm disabled:opacity-30"
                   >
                     ⬆️
                   </button>
                   <button
-                    onClick={() => handleMove(c, 'down')}
+                    onClick={() => handleMove(c, "down")}
                     disabled={
                       contents
                         .sort((a, b) => a.order_index - b.order_index)
                         .at(-1)?.id === c.id
                     }
-                    className='text-gray-500 hover:text-black text-sm disabled:opacity-30'
+                    className="text-gray-500 hover:text-black text-sm disabled:opacity-30"
                   >
                     ⬇️
                   </button>
@@ -228,13 +235,13 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
                       setEditActive(c.is_published);
                       setEditHtml(c.html_content);
                     }}
-                    className='text-blue-500 hover:text-blue-700 text-sm'
+                    className="text-blue-500 hover:text-blue-700 text-sm"
                   >
                     ✏️ Edit
                   </button>
                   <button
                     onClick={() => handleDelete(c.id)}
-                    className='text-red-500 hover:text-red-700 text-sm'
+                    className="text-red-500 hover:text-red-700 text-sm"
                   >
                     🗑️ Delete
                   </button>
@@ -243,43 +250,50 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
 
               {/* Nội dung */}
               {isOpen && (
-                <div className='mt-3 text-gray-700'>
+                <div className="mt-3 text-gray-700">
                   {isEditing ? (
                     <div>
                       <input
                         value={editTitle}
                         onChange={(e) => setEditTitle(e.target.value)}
-                        className='border px-2 py-1 text-sm rounded w-full mb-2'
+                        className="border px-2 py-1 text-sm rounded w-full mb-2"
                       />
                       <input
-                        type='number'
+                        type="number"
                         value={editOrder}
                         onChange={(e) => setEditOrder(Number(e.target.value))}
-                        className='border px-2 py-1 text-sm rounded w-full mb-2'
-                        placeholder='Order index'
+                        className="border px-2 py-1 text-sm rounded w-full mb-2"
+                        placeholder="Order index"
                       />
-                      <label className='flex items-center gap-2 text-sm mb-2'>
+                      <label className="flex items-center gap-2 text-sm mb-2">
                         <input
-                          type='checkbox'
+                          type="checkbox"
                           checked={editActive}
                           onChange={(e) => setEditActive(e.target.checked)}
                         />
                         Published
                       </label>
+                      {/* <ReactQuill value={editHtml} onChange={setEditHtml} /> */}
                       <ReactQuill
+                        theme="snow"
                         value={editHtml}
                         onChange={setEditHtml}
+                        modules={quillModules}
+                        formats={quillFormats}
                       />
-                      <div className='flex gap-2 mt-2'>
+                      <div className="flex gap-2 mt-2">
                         <button
                           onClick={() => handleUpdate(c.id)}
-                          className='px-3 py-1 bg-green-500 text-white rounded'
+                          className="px-3 py-1 bg-green-500 text-white rounded"
                         >
                           Save
                         </button>
                         <button
-                          onClick={() => { setEditing(null); setEditHtml(""); }}
-                          className='px-3 py-1 bg-gray-300 rounded'
+                          onClick={() => {
+                            setEditing(null);
+                            setEditHtml("");
+                          }}
+                          className="px-3 py-1 bg-gray-300 rounded"
                         >
                           Cancel
                         </button>
@@ -287,141 +301,101 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
                     </div>
                   ) : (
                     <div
-                      className='prose max-w-none mb-4'
+                      className="ql-editor max-w-none mb-4"
                       dangerouslySetInnerHTML={{ __html: c.html_content }}
                     />
                   )}
 
-                  {/* Danh sách ảnh */}
-                  {images[c.id] && images[c.id].length > 0 && (
-                    <div className='space-y-4 mb-3'>
-                      {images[c.id].map((img) => (
-                        <div key={img.id} className='border rounded p-2'>
-                          <div className='aspect-[16/9] overflow-hidden rounded'>
-                            <img
-                              src={`${IMAGE_BASE_URL}${img.image_url}`}
-                              alt={img.caption || ''}
-                              className='w-full h-full object-cover'
-                            />
-                          </div>
-                          <p className='text-xs text-gray-600 mt-1'>
-                            {img.caption || 'No caption'}
-                          </p>
-                          <div className='flex gap-2 mt-1'>
+                  {/* Quản lý hình ảnh */}
+                  <div className="mt-4 border-t pt-3">
+                    <h4 className="font-medium text-gray-800 mb-2">
+                      Attached Images
+                    </h4>
+
+                    {/* Danh sách ảnh */}
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                      {images[c.id]?.map((img) => (
+                        <div
+                          key={img.id}
+                          className="relative border rounded-lg overflow-hidden group"
+                        >
+                          <img
+                            src={`${IMAGE_BASE_URL}${img.image_url}`}
+                            alt={img.caption || ""}
+                            className="w-full h-40 object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-3">
                             <button
                               onClick={() => {
-                                setPendingImage((prev) => ({
-                                  ...prev,
-                                  [c.id]: {
-                                    file: null,
-                                    caption: img.caption,
-                                    editing: img.id,
-                                  },
-                                }));
+                                const fileInput =
+                                  document.createElement("input");
+                                fileInput.type = "file";
+                                fileInput.onchange = async (e) => {
+                                  const file = e.target.files[0];
+                                  if (file) {
+                                    await updateImage(
+                                      img.id,
+                                      c.id,
+                                      file,
+                                      img.caption
+                                    );
+                                    await fetchImages(c.id);
+                                  }
+                                };
+                                fileInput.click();
                               }}
-                              className='text-blue-500 text-xs'
+                              className="bg-white/90 hover:bg-white text-gray-800 text-xs px-3 py-1 rounded shadow"
                             >
                               ✏️ Edit
                             </button>
                             <button
                               onClick={async () => {
-                                if (window.confirm('Xoá ảnh này?')) {
+                                if (window.confirm("Xoá ảnh này?")) {
                                   await deleteImage(img.id);
                                   await fetchImages(c.id);
                                 }
                               }}
-                              className='text-red-500 text-xs'
+                              className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded shadow"
                             >
                               🗑️ Delete
                             </button>
                           </div>
+                          <p className="text-xs text-gray-600 text-center py-1 bg-gray-50 border-t truncate">
+                            {img.caption || "No caption"}
+                          </p>
                         </div>
                       ))}
+
+                      {/* Trường hợp chưa có ảnh */}
+                      {(!images[c.id] || images[c.id].length === 0) && (
+                        <p className="text-sm text-gray-500 italic">
+                          No images uploaded yet.
+                        </p>
+                      )}
                     </div>
-                  )}
 
-                  {/* Upload / Update ảnh */}
-                  <div className='mt-2'>
-                    <input
-                      type='text'
-                      placeholder='Tên ảnh (caption)'
-                      value={pendingImage[c.id]?.caption || ''}
-                      onChange={(e) =>
-                        setPendingImage((prev) => ({
-                          ...prev,
-                          [c.id]: {
-                            ...(prev[c.id] || {}),
-                            caption: e.target.value,
-                          },
-                        }))
-                      }
-                      className='border px-2 py-1 text-xs rounded w-full mb-2'
-                    />
-                    <input
-                      type='file'
-                      onChange={(e) =>
-                        setPendingImage((prev) => ({
-                          ...prev,
-                          [c.id]: {
-                            ...(prev[c.id] || {}),
-                            file: e.target.files[0],
-                          },
-                        }))
-                      }
-                      className='block text-xs'
-                    />
-
-                    {pendingImage[c.id] && (
-                      <div className='flex gap-2 mt-2'>
-                        {pendingImage[c.id].editing ? (
-                          <button
-                            onClick={async () => {
-                              await handleUpdateImage(
-                                pendingImage[c.id].editing,
-                                pendingImage[c.id].file,
-                                pendingImage[c.id].caption,
-                                c.id
-                              );
-                              setPendingImage((prev) => ({
-                                ...prev,
-                                [c.id]: null,
-                              }));
-                            }}
-                            className='px-3 py-1 bg-green-500 text-white text-xs rounded'
-                          >
-                            Update Image
-                          </button>
-                        ) : (
-                          <button
-                            onClick={async () => {
-                              await handleUpload(
-                                c.id,
-                                pendingImage[c.id].file,
-                                pendingImage[c.id].caption
-                              );
-                              setPendingImage((prev) => ({
-                                ...prev,
-                                [c.id]: null,
-                              }));
-                            }}
-                            className='px-3 py-1 bg-blue-500 text-white text-xs rounded'
-                          >
-                            Save Image
-                          </button>
-                        )}
-                        <button
-                          onClick={() =>
-                            setPendingImage((prev) => ({
-                              ...prev,
-                              [c.id]: null,
-                            }))
-                          }
-                          className='px-3 py-1 bg-gray-300 text-xs rounded'
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    )}
+                    {/* Nút thêm ảnh */}
+                    <div className="flex justify-start">
+                      <button
+                        onClick={() => {
+                          const fileInput = document.createElement("input");
+                          fileInput.type = "file";
+                          fileInput.accept = "image/*";
+                          fileInput.onchange = async (e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              const autoCaption = "image_" + Date.now();
+                              await uploadImage(c.id, file, autoCaption);
+                              await fetchImages(c.id);
+                            }
+                          };
+                          fileInput.click();
+                        }}
+                        className="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm shadow-sm"
+                      >
+                        <span>＋ Add Image</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -430,29 +404,63 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
         })}
       </div>
       {/* Form thêm content mới */}
-      <div className='p-4 border rounded bg-white mt-6'>
-        <p className='text-gray-600 mb-2 font-medium'>Thêm Content mới</p>
-        <input
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          placeholder='Content title'
-          className='w-full border px-2 py-1 text-sm rounded mb-2'
-        />
-        <label className='flex items-center gap-2 text-sm mb-2'>
-          <input
-            type='checkbox'
-            checked={newActive}
-            onChange={(e) => setNewActive(e.target.checked)}
-          />
-          Published
-        </label>
-        <ReactQuill value={newHtml} onChange={setNewHtml} />
-        <button
-          onClick={handleCreate}
-          className='mt-3 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600'
-        >
-          + Save Content
-        </button>
+      {/* Form thêm content mới */}
+      <div className="p-4 rounded bg-white mt-6">
+        {showNewContentForm ? (
+          <div>
+            <p className="text-gray-600 mb-2 font-medium">Thêm Content mới</p>
+            <input
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              placeholder="Content title"
+              className="w-full border px-2 py-1 text-sm rounded mb-2"
+            />
+            <label className="flex items-center gap-2 text-sm mb-2">
+              <input
+                type="checkbox"
+                checked={newActive}
+                onChange={(e) => setNewActive(e.target.checked)}
+              />
+              Published
+            </label>
+
+            {/* <ReactQuill theme="snow" value={newHtml} onChange={setNewHtml} /> */}
+            <ReactQuill
+              theme="snow"
+              value={newHtml}
+              onChange={setNewHtml}
+              modules={quillModules}
+              formats={quillFormats}
+            />
+            <div className="flex gap-2 mt-3">
+              <button
+                onClick={handleCreate}
+                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                💾 Save
+              </button>
+              <button
+                onClick={() => {
+                  setShowNewContentForm(false);
+                  setNewHtml("");
+                  setNewTitle("");
+                }}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex justify-center">
+            <button
+              onClick={() => setShowNewContentForm(true)}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 shadow-sm"
+            >
+              ＋ Add New Content
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
