@@ -1,5 +1,5 @@
 // src/components/ContentViewer.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ReactQuill from "react-quill-new";
 
 
@@ -44,6 +44,41 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
   // state cho on/off new content editor:
   const [showNewContentForm, setShowNewContentForm] = useState(false);
 
+  // config for editor:
+  const editQuillRef = useRef(null);
+  const createQuillRef = useRef(null);
+
+  // Giữ inline formats (font/size/bold/...) khi xuống dòng
+  const attachEnterKeepsInlineFormats = (quill) => {
+    if (!quill) return;
+    // Tránh gắn trùng nhiều lần
+    if (quill.__enterKeepInlineBound) return;
+    quill.__enterKeepInlineBound = true;
+
+    quill.keyboard.addBinding({ key: 13 }, function (range) {
+      const prevFormats = quill.getFormat(Math.max(0, range.index - 1), 1) || {};
+      this.quill.insertText(range.index, "\n", "user");
+      const newIndex = range.index + 1;
+
+      // Chỉ giữ 1 số inline formats thường dùng
+      const keep = ["font", "size", "bold", "italic", "underline", "strike", "color", "background", "code"];
+      keep.forEach((k) => {
+        if (prevFormats[k]) {
+          quill.formatText(newIndex, 0, k, prevFormats[k], "user");
+          quill.format(k, prevFormats[k], "user"); // đồng bộ toolbar
+        }
+      });
+
+      quill.setSelection(newIndex, 0, "silent");
+      return false; // chặn Enter mặc định (đã xử lý)
+    });
+  };
+  useEffect(() => {
+    const q1 = editQuillRef.current?.getEditor?.();
+    const q2 = createQuillRef.current?.getEditor?.();
+    attachEnterKeepsInlineFormats(q1);
+    attachEnterKeepsInlineFormats(q2);
+  }, [editing, showNewContentForm]);
   useEffect(() => {
     if (categoryId) {
       loadContents();
@@ -174,7 +209,7 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
     await loadContents();
   };
 
-  
+
 
   if (!categoryId) {
     return <p className="p-4 text-gray-500">Please select a category</p>;
@@ -197,10 +232,9 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
                 <button
                   onClick={() => toggleItem(c.id)}
                   className={`px-3 py-1 rounded-md text-sm font-medium transition
-                    ${
-                      isOpen
-                        ? "bg-blue-200 text-blue-800"
-                        : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                    ${isOpen
+                      ? "bg-blue-200 text-blue-800"
+                      : "bg-gray-100 hover:bg-gray-200 text-gray-700"
                     }`}
                 >
                   {c.title}
@@ -275,6 +309,7 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
                       </label>
                       {/* <ReactQuill value={editHtml} onChange={setEditHtml} /> */}
                       <ReactQuill
+                        ref={editQuillRef}
                         theme="snow"
                         value={editHtml}
                         onChange={setEditHtml}
@@ -426,6 +461,7 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
 
             {/* <ReactQuill theme="snow" value={newHtml} onChange={setNewHtml} /> */}
             <ReactQuill
+              ref={createQuillRef}
               theme="snow"
               value={newHtml}
               onChange={setNewHtml}

@@ -1,0 +1,15 @@
+1. chuyển Font từ “class-based” sang style-based (attributors/style/font). Cách này giúp Quill nhận biết giá trị thật (Arial, …) → dropdown hiển thị đúng, và giữ định dạng ổn định hơn khi xuống dòng.
+
+2. Đang chỉ CSS cho item trong menu, chưa style phần label. Thêm các rule cho .ql-picker-label
+
+3. 
+3.1: Thêm useRef và 2 ref cho editor
+3.2: Thêm binding giữ format khi nhấn Enter
+3.3: Gắn binding vào các editor khi chúng mount
+3.4: Truyền ref vào 2 <ReactQuill />
+
+
+4. Trong App.jsx:
+Đảm bảo thứ tự import:
+import "react-quill-new/dist/quill.snow.css"; trước import "./index.css"; để rule của bạn thắng theme.
+

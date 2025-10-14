@@ -1,50 +1,69 @@
 // src/config/quillConfigWordLike.js
 import Quill from "quill";
 
-// === KHAI BÁO FONT WHITELIST CHO QUILL ===
-const Font = Quill.import("formats/font");
+/**
+ * DÙNG STYLE-BASED ATTRIBUTORS cho Font & Size
+ * -> giữ format ổn định khi Enter, dropdown hiển thị đúng tên,
+ * -> tương thích tốt lúc load lại nội dung để edit.
+ */
+
+// Font: dùng style "font-family"
+const Font = Quill.import("attributors/style/font");
 Font.whitelist = [
-  "arial",
-  "times-new-roman",
-  "roboto",
-  "montserrat",
-  "lora",
-  "poppins",
-  "open-sans",
-  "georgia",
-  "verdana",
-  "courier-new"
+  "Arial",
+  "Times New Roman",
+  "Roboto",
+  "Montserrat",
+  "Lora",
+  "Poppins",
+  "Open Sans",
+  "Georgia",
+  "Verdana",
+  "Courier New",
 ];
 Quill.register(Font, true);
 
-// === MODULES ===
+// Size: dùng style "font-size"
+const Size = Quill.import("attributors/style/size");
+Size.whitelist = ["10px", "12px", "14px", "16px", "18px", "24px", "32px"];
+Quill.register(Size, true);
+
+// MODULES
 export const quillModules = {
   toolbar: [
     [
-      { header: [1, 2, 3, 4, 5, 6, false] },   // tiêu đề
-      { font: [
-        "arial", "times-new-roman", "roboto", "montserrat",
-        "lora", "poppins", "open-sans", "georgia", "verdana", "courier-new"
-      ] },
-      { size: ["10px", "12px", "14px", "16px", "18px", "24px", "32px"] }
+      { header: [1, 2, 3, 4, 5, 6, false] },
+      { font: Font.whitelist },   // dùng đúng tên như whitelist
+      { size: Size.whitelist },   // dùng px
     ],
-    ["bold", "italic", "underline", "strike"], // định dạng chữ
-    [{ color: [] }, { background: [] }],        // màu chữ & highlight
-    [{ align: [] }],                            // căn lề
-    [{ list: "ordered" }, { list: "bullet" }],  // danh sách
-    [{ indent: "-1" }, { indent: "+1" }],       // thụt lề
-    ["blockquote", "code-block"],               // blockquote & code
-    ["link"],                                   // link (không ảnh)
-    ["clean"],                                  // xóa định dạng
+    ["bold", "italic", "underline", "strike"],
+    [{ color: [] }, { background: [] }],
+    [{ align: [] }],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ indent: "-1" }, { indent: "+1" }],
+    ["blockquote", "code-block"],
+    ["link"],
+    ["clean"],
   ],
+  clipboard: { matchVisual: false },
+  history: { delay: 500, maxStack: 500, userOnly: true },
 };
 
-// === FORMATS ===
+// FORMATS
 export const quillFormats = [
-  "header", "font", "size",
-  "bold", "italic", "underline", "strike",
-  "color", "background",
-  "align", "list", "indent",
-  "blockquote", "code-block",
+  "header",
+  "font",
+  "size",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "color",
+  "background",
+  "align",
+  "list",
+  "indent",
+  "blockquote",
+  "code-block",
   "link",
 ];
