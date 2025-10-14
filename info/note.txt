@@ -4,10 +4,10 @@ cần:
 - Làm lại cho userCategoryList với phân lóp (xong)
 - thiết kế lại add imagee (xong)
 - thêm nhiều tuỳ chọn cho content (xong)
+- khi chọn các tính năng thì chưa set các định dạng, khi enter thì mất định dạng, khi edit cũng mất định dạng. (xong)
 
 
 - Khi xoá ảnh thì cần xoá luôn trong database
-- khi chọn các tính năng thì chưa set các định dạng, khi enter thì mất định dạng, khi edit cũng mất định dạng. 
 - button click đóng mở list category và module. (đóng thì zoom to khu vực content)
 - tách lớp cho content
 - content chưa lưu đc định dạng html cho các chức năng editext.
