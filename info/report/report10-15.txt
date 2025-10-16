@@ -1,0 +1,11 @@
+- test lại full chức năng cho content. (xong)
+- Add category chưa có level 2. (xong)
+- Thiết kế giao diện cho view tên category trên đầu list content. (chưa)
+- tách lớp cho content. (chưa)
+- Sửa lại category về add và change. (chưa)
+--------------------
+*note: Chưa lưu đc thời gian save mới cho content đc cập nhật. (Chưa)
+
+***Idea: hiệu ứng màu chạy chạy cho thanh header (chưa)
+
+

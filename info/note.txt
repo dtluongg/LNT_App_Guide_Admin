@@ -5,11 +5,21 @@ cần:
 - thiết kế lại add imagee (xong)
 - thêm nhiều tuỳ chọn cho content (xong)
 - khi chọn các tính năng thì chưa set các định dạng, khi enter thì mất định dạng, khi edit cũng mất định dạng. (xong)
+- content chưa lưu đc định dạng html cho các chức năng editext.(xong)
+- upload image ko cần nhập tên (xong)
+
+
 
 
 - Khi xoá ảnh thì cần xoá luôn trong database
 - button click đóng mở list category và module. (đóng thì zoom to khu vực content)
 - tách lớp cho content
-- content chưa lưu đc định dạng html cho các chức năng editext.
-- upload image ko cần nhập tên
 - chuyển mysql -> sqlserver.
+
+-- Lệnh tạo worktree cho commit cũ của git để làm báo cáo:
++ xem all commit: 
+-> git log --oneline --graph --decorate --all
++ Tạo folder lưu commit mình muốn: 
+-> git worktree add ../repo-commit <7 kí tự log SHA_or_REF>
++ xem tạm thời 
+-> git switch --detach <7 kí tự log SHA_or_REF>
