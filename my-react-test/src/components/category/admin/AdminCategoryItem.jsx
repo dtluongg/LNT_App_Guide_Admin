@@ -18,7 +18,7 @@ export default function AdminCategoryItem({
     // thêm props mới
     hasChildren = false,
     isOpen = false,
-    toggleParent = () => {},
+    toggleParent = () => { },
     isChild = false,
     styles,
     level,
@@ -53,21 +53,42 @@ export default function AdminCategoryItem({
                             className="border px-2 py-1 text-sm rounded"
                             placeholder="Title"
                         />
-                        <input
+                        {/* <input
                             type="number"
                             value={editState.editOrder}
                             onChange={(e) => onEditChange("order_index", Number(e.target.value))}
                             className="border px-2 py-1 text-sm rounded"
                             placeholder="Order index"
-                        />
-                        <label className="flex items-center gap-2 text-sm">
+                        /> */}
+                        {/* <select
+                            value={category.parent_id || ""}
+                            onChange={(e) => onEditChange("parent_id", e.target.value || null)}
+                            className="border px-2 py-1 text-sm rounded"
+                        >
+                            <option value="">-- No parent (Level 1) --</option>
+                            {category.allCategories
+                                ?.filter(
+                                    (c) =>
+                                        c.id !== category.id && // Không chọn chính nó
+                                        (!c.parent_id || // Level 1
+                                            category.allCategories.some(
+                                                (p) => p.id === c.parent_id && !p.parent_id // Level 2
+                                            ))
+                                )
+                                .map((c) => (
+                                    <option key={c.id} value={c.id}>
+                                        {c.parent_id ? `↳ ${c.title}` : c.title}
+                                    </option>
+                                ))}
+                        </select> */}
+                        {/* <label className="flex items-center gap-2 text-sm">
                             <input
                                 type="checkbox"
                                 checked={editState.editActive}
                                 onChange={(e) => onEditChange("is_active", e.target.checked)}
                             />
                             Active
-                        </label>
+                        </label> */}
                         <div className="flex gap-2">
                             <button
                                 onClick={() => onEditSave(category.id)}

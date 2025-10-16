@@ -1,3 +1,5 @@
+// src/components/category/user/UserCategoryList.jsx
+
 import React, { useEffect, useState, useMemo } from "react";
 import { categoryService } from "../../../services/categoryService";
 import { buildCategoryTree, filterCategories } from "../shared/categoryHelper";
@@ -36,8 +38,23 @@ export default function UserCategoryList({
   );
 
   // ✅ Tự động mở các parent khi search
+  // useEffect(() => {
+  //   if (!search) return;
+  //   const newOpen = {};
+  //   const openAll = (nodes) => {
+  //     nodes.forEach((n) => {
+  //       if (n.children?.length > 0) {
+  //         newOpen[n.id] = true;
+  //         openAll(n.children);
+  //       }
+  //     });
+  //   };
+  //   openAll(filteredTree);
+  //   setOpenParents((prev) => ({ ...prev, ...newOpen }));
+  // }, [search, filteredTree]);
   useEffect(() => {
     if (!search) return;
+
     const newOpen = {};
     const openAll = (nodes) => {
       nodes.forEach((n) => {
@@ -48,8 +65,21 @@ export default function UserCategoryList({
       });
     };
     openAll(filteredTree);
-    setOpenParents((prev) => ({ ...prev, ...newOpen }));
-  }, [search, filteredTree]);
+
+    // chỉ set nếu khác
+    setOpenParents((prev) => {
+      const prevKeys = Object.keys(prev);
+      const newKeys = Object.keys(newOpen);
+      if (
+        prevKeys.length === newKeys.length &&
+        prevKeys.every((k) => newOpen[k])
+      ) {
+        return prev; // không thay đổi
+      }
+      return { ...prev, ...newOpen };
+    });
+  }, [search]);
+
 
   // ✅ Xử lý chọn category
   const handleSelect = (id, title) => {

@@ -8,10 +8,10 @@ export default function AdminCategoryForm({
   setNewTitle,
   newParent,
   setNewParent,
-  newOrder,
-  setNewOrder,
-  newActive,
-  setNewActive,
+  // newOrder,
+  // setNewOrder,
+  // newActive,
+  // setNewActive,
   onSave,
   onCancel,
 }) {
@@ -28,30 +28,36 @@ export default function AdminCategoryForm({
         onChange={(e) => setNewParent(e.target.value || null)}
         className="w-full border px-2 py-1 text-sm rounded"
       >
-        <option value="">-- No parent (Level 1) --</option>
+        <option value="">-- Root --</option>
         {categories
-          .filter((c) => !c.parent_id)
+          .filter(
+            (c) =>
+              !c.parent_id || // cấp 1
+              categories.some(
+                (p) => p.id === c.parent_id && !p.parent_id // cấp 2
+              )
+          )
           .map((c) => (
             <option key={c.id} value={c.id}>
-              {c.title}
+              {c.parent_id ? `↳ ${c.title} (level 2)` : `${c.title} (level 1)`}
             </option>
           ))}
       </select>
-      <input
+      {/* <input
         type="number"
         value={newOrder}
         onChange={(e) => setNewOrder(Number(e.target.value))}
         placeholder="Order index"
         className="w-full border px-2 py-1 text-sm rounded"
-      />
-      <label className="flex items-center gap-2 text-sm">
+      /> */}
+      {/* <label className="flex items-center gap-2 text-sm">
         <input
           type="checkbox"
           checked={newActive}
           onChange={(e) => setNewActive(e.target.checked)}
         />
         Active
-      </label>
+      </label> */}
       <div className="flex gap-2">
         <button
           onClick={onSave}

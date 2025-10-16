@@ -81,8 +81,16 @@ export default function AdminCategoryContainer({ moduleId, onSelectCategory, nam
 
   const handleAdd = async () => {
     if (!newTitle.trim()) return;
-    const sameLevel = categories.filter((c) => (c.parent_id || null) === (newParent || null));
-    const maxOrder = sameLevel.length > 0 ? Math.max(...sameLevel.map((c) => c.order_index || 0)) : 0;
+    const parentIdNum = newParent ? Number(newParent) : null;
+    // ✅ Lấy cùng cấp
+    const sameLevel = categories.filter(
+      (c) => (c.parent_id || null) === parentIdNum
+    );
+    // ✅ Tính order_index max
+    const maxOrder =
+      sameLevel.length > 0
+        ? Math.max(...sameLevel.map((c) => c.order_index || 0))
+        : 0;
 
     await categoryService.create({
       module_id: moduleId,
@@ -118,20 +126,20 @@ export default function AdminCategoryContainer({ moduleId, onSelectCategory, nam
     setOpenParents((prev) => ({ ...prev, [id]: !prev[id] }));
   };
   useEffect(() => {
-  if (search) {
-    const newOpen = {};
-    const openAll = (nodes) => {
-      nodes.forEach((n) => {
-        if (n.children?.length > 0) {
-          newOpen[n.id] = true;
-          openAll(n.children);
-        }
-      });
-    };
-    openAll(filteredTree);
-    setOpenParents((prev) => ({ ...prev, ...newOpen }));
-  }
-}, [search, filteredTree]);
+    if (search) {
+      const newOpen = {};
+      const openAll = (nodes) => {
+        nodes.forEach((n) => {
+          if (n.children?.length > 0) {
+            newOpen[n.id] = true;
+            openAll(n.children);
+          }
+        });
+      };
+      openAll(filteredTree);
+      setOpenParents((prev) => ({ ...prev, ...newOpen }));
+    }
+  }, [search, filteredTree]);
 
   return (
     <aside className={categoryColors.listStyle}>
@@ -177,10 +185,10 @@ export default function AdminCategoryContainer({ moduleId, onSelectCategory, nam
           setNewTitle={setNewTitle}
           newParent={newParent}
           setNewParent={setNewParent}
-          newOrder={newOrder}
-          setNewOrder={setNewOrder}
-          newActive={newActive}
-          setNewActive={setNewActive}
+          // newOrder={newOrder}
+          // setNewOrder={setNewOrder}
+          // newActive={newActive}
+          // setNewActive={setNewActive}
           onSave={handleAdd}
           onCancel={() => setAdding(false)}
         />

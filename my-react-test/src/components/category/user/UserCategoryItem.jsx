@@ -1,3 +1,5 @@
+// src/components/category/user/UserCategoryItem.jsx
+
 import React from "react";
 
 export default function UserCategoryItem({
