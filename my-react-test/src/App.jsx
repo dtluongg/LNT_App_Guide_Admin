@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Header from "./components/Header";
 import Navbar from "./components/Navbar";
 import ContentViewer from "./components/ContentViewer";
+import AdminContentContainer from "./components/content/admin/AdminContentContainer";
+import UserContentContainer from "./components/content/user/UserContentContainer";
 
 // import login + 2 loại CategoryList
 import Login from "./components/auth/Login";
@@ -44,10 +46,22 @@ const App = () => {
         )}
 
         {/* Main content area */}
-        <ContentViewer
+        {/* <ContentViewer
           categoryId={activeCategory}
           titleCategory={titleCategory}
-        />
+        /> */}
+        {/* Main content area */}
+        {user.role === "admin" ? (
+          <AdminContentContainer
+            categoryId={activeCategory}
+            titleCategory={titleCategory}
+          />
+        ) : (
+          <UserContentContainer
+            categoryId={activeCategory}
+            titleCategory={titleCategory}
+          />
+        )}
       </div>
     </div>
   );
