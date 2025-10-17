@@ -4,6 +4,12 @@
 - Tên nếu dài quá thì sẽ ẩn đi và để … hoặc ẩn bớt đi để không bị phá cấu trúc giao diện. (chưa)
 
 --------------------
-*note: Chưa lưu đc thời gian save mới cho content đc cập nhật. 
+*note: Chưa lưu đc thời gian save mới cho content đc cập nhật.
+
+
+*** bổ sung: 
+- Cần save định dạng của word, chứ nếu làm từng cái thì rất mất thời gian.
+- Image cần tìm cách thêm nhanh hơn, chụp màn hình từ bên kia và thả vào bên này là xong. 
+
 
 ***Idea: hiệu ứng màu chạy chạy cho thanh header.
