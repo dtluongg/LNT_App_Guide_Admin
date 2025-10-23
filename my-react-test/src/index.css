@@ -53,3 +53,42 @@
 
 /* Bạn KHÔNG cần các class .ql-font-arial/.ql-font-roboto... nữa khi dùng style-based.
    Nếu html cũ đang có class, giữ cũng không sao, nhưng có thể xóa block cũ để gọn. */
+
+/* ----- Nới rộng & chống xuống dòng cho dropdown Font ----- */
+.ql-snow .ql-picker.ql-font {
+  min-width: 200px;                    /* nới rộng label */
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label,
+.ql-snow .ql-picker.ql-font .ql-picker-item {
+  white-space: nowrap;                 /* không cho xuống dòng */
+}
+
+/* Dropdown list rộng & cuộn được nếu dài */
+.ql-snow .ql-picker.ql-font .ql-picker-options {
+  min-width: 220px;                    /* rộng hơn label một chút */
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+/* Giảm khả năng label bị “đè” bởi mũi tên ▼ */
+.ql-snow .ql-picker.ql-font .ql-picker-label {
+  padding-right: 28px;                 /* chừa chỗ cho caret */
+}
+
+/* (tuỳ chọn) nới Size tương tự */
+.ql-snow .ql-picker.ql-size {
+  min-width: 110px;
+}
+.ql-snow .ql-picker.ql-size .ql-picker-options {
+  min-width: 120px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+/* Hiển thị tên đẹp cho các giá trị có dấu cách (data-value = đúng tên font) */
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="Times New Roman"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Times New Roman"]::before {
+  content: "Times New Roman";
+  font-family: "Times New Roman", serif;
+}

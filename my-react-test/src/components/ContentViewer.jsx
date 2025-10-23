@@ -2,6 +2,7 @@
 // src/components/ContentViewer.jsx
 import React, { useEffect, useState, useRef } from "react";
 import ReactQuill from "react-quill-new";
+import api from "../api/client";
 
 import {
   getContentsByCategory,
@@ -19,7 +20,8 @@ import { IMAGE_BASE_URL } from "../config/config";
 import { quillModules, quillFormats } from "../config/quillConfigWordLike";
 
 /* ====== (ADDED) Cấu hình API convert DOCX -> HTML ====== */
-const CONVERT_API = "http://localhost:3000/api/convert"; // đổi nếu backend convert của bạn khác
+const CONVERT_API = `${IMAGE_BASE_URL}/api/convert`; // đổi nếu backend convert của bạn khác
+console.log("CONVERT_API:", CONVERT_API);
 // Nếu bạn muốn text-only, loại mọi <img> (giữ nguyên nếu sau này muốn để ảnh)
 const stripImages = (html) => html.replace(/<img[^>]*>/gi, "");
 // Hàm mở file dialog, gọi convert API và set HTML vào state (newHtml)

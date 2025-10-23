@@ -373,3 +373,143 @@ INSERT INTO categories (module_id, parent_id, title, description, order_index, i
 (6, 38, 'How to view block order', 'View and filter block orders', 2, TRUE),
 (6, 38, 'How to view edit version', 'View revision history of block orders', 3, TRUE);
 
+-- =========================================================
+-- ADD CATEGORIES (L2/L3) UNDER "Confirmed Order Management"
+-- =========================================================
+START TRANSACTION;
+
+-- L1 parent: Confirmed Order Management (module 6)
+SET @confirmed_parent_id := (
+  SELECT id FROM categories
+  WHERE module_id = 6 AND parent_id IS NULL AND title = 'Confirmed Order Management'
+  LIMIT 1
+);
+
+-- ============ Level 2 ============
+-- 1. Create header sale order
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @confirmed_parent_id, '1. Create header sale order', NULL, 1, TRUE);
+SET @L2_1 := LAST_INSERT_ID();
+
+-- 2. Create PO wise style detail
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @confirmed_parent_id, '2. Create PO wise style detail', NULL, 2, TRUE);
+SET @L2_2 := LAST_INSERT_ID();
+
+-- 3. Validation process
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @confirmed_parent_id, '3. Validation process', NULL, 3, TRUE);
+SET @L2_3 := LAST_INSERT_ID();
+
+-- ============ Level 3 for "1. Create header sale order" ============
+-- 1.1 Product detail
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L2_1, '1.1 Product detail', NULL, 1, TRUE);
+SET @L3_1_1 := LAST_INSERT_ID();
+
+-- 1.1.1 Save image
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L3_1_1, '1.1.1 Save image', NULL, 1, TRUE);
+
+-- 1.1.2 Allocate FG item for Sale order
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L3_1_1, '1.1.2 Allocate FG item for Sale order', NULL, 2, TRUE);
+
+-- 1.1.3 Allocate FG item color for sale order
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L3_1_1, '1.1.3 Allocate FG item color for sale order', NULL, 3, TRUE);
+
+-- 1.2 Size chart template
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L2_1, '1.2 Size chart template', NULL, 2, TRUE);
+
+-- 1.3 Change Status for Sale Order
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L2_1, '1.3 Change Status for Sale Order', NULL, 3, TRUE);
+
+-- ============ Level 3 for "2. Create PO wise style detail" ============
+-- 2.1 New BPO line creation
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L2_2, '2.1 New BPO line creation', NULL, 1, TRUE);
+
+-- 2.2 Copy PO
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L2_2, '2.2 Copy PO', NULL, 2, TRUE);
+
+-- 2.3 Enter size breakdown
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L2_2, '2.3 Enter size breakdown', NULL, 3, TRUE);
+SET @L3_2_3 := LAST_INSERT_ID();
+
+-- 2.3.1 Enter size breakdown by qty
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L3_2_3, '2.3.1 Enter size breakdown by qty', NULL, 1, TRUE);
+
+-- 2.3.2 Enter size breakdown by ratio %
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L3_2_3, '2.3.2 Enter size breakdown by ratio %', NULL, 2, TRUE);
+
+-- 2.4 Copy size breakdown
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L2_2, '2.4 Copy size breakdown', NULL, 4, TRUE);
+
+-- 2.5 BPO status
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L2_2, '2.5 BPO status', NULL, 5, TRUE);
+SET @L3_2_5 := LAST_INSERT_ID();
+
+-- 2.5.1 BPO status OPEN
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L3_2_5, '2.5.1 BPO status OPEN', NULL, 1, TRUE);
+
+-- 2.5.2 BPO status CONFIRMED
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L3_2_5, '2.5.2 BPO status CONFIRMED', NULL, 2, TRUE);
+
+-- 2.5.3 BPO status Canceled
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L3_2_5, '2.5.3 BPO status Canceled', NULL, 3, TRUE);
+
+-- 2.6 Order DTW (delivery time window)
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L2_2, '2.6 Order DTW (delivery time window)', NULL, 6, TRUE);
+
+-- 2.7 Material lead time
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L2_2, '2.7 Material lead time', NULL, 7, TRUE);
+
+-- 2.8 Production lead time (Target PCD)
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L2_2, '2.8 Production lead time (Target PCD)', NULL, 8, TRUE);
+
+-- ============ Level 3 for "3. Validation process" ============
+-- 3.1 Product detail
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L2_3, '3.1 Product detail', NULL, 1, TRUE);
+
+-- 3.2 Size chart template
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L2_3, '3.2 Size chart template', NULL, 2, TRUE);
+
+-- 3.3 Order status detail
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L2_3, '3.3 Order status detail', NULL, 3, TRUE);
+SET @L3_3_3 := LAST_INSERT_ID();
+
+-- 3.3.1 OPEN
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L3_3_3, '3.3.1 OPEN', NULL, 1, TRUE);
+
+-- 3.3.2 ON HOLD
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L3_3_3, '3.3.2 ON HOLD', NULL, 2, TRUE);
+
+-- 3.3.3 CLOSED
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L3_3_3, '3.3.3 CLOSED', NULL, 3, TRUE);
+
+-- 3.3.4 CANCELED/DELETED
+INSERT INTO categories (module_id, parent_id, title, description, order_index, is_active)
+VALUES (6, @L3_3_3, '3.3.4 CANCELED/DELETED', NULL, 4, TRUE);
+
+COMMIT;
