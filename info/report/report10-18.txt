@@ -1,0 +1,9 @@
+- tách lớp + phân quyền cho content. (xong)
+- Thiết kế giao diện cho view tên category trên đầu list content. 
+- Button mũi tên trỏ xuống nên đổi sang cùng hàng với các button crud, thêm bên cạnh bên trái. 
+- Tên nếu dài quá thì sẽ ẩn đi và để … hoặc ẩn bớt đi để không bị phá cấu trúc giao diện.
+
+--------------------
+*note: Chưa lưu đc thời gian save mới cho content đc cập nhật. 
+
+***Idea: hiệu ứng màu chạy chạy cho thanh header.

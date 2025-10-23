@@ -1,7 +1,9 @@
-// v2
+// v1
 // src/components/ContentViewer.jsx
 import React, { useEffect, useState, useRef } from "react";
 import ReactQuill from "react-quill-new";
+
+
 
 import {
   getContentsByCategory,
@@ -17,44 +19,6 @@ import {
 } from "../api/images";
 import { IMAGE_BASE_URL } from "../config/config";
 import { quillModules, quillFormats } from "../config/quillConfigWordLike";
-
-/* ====== (ADDED) Cấu hình API convert DOCX -> HTML ====== */
-const CONVERT_API = "http://localhost:3000/api/convert"; // đổi nếu backend convert của bạn khác
-// Nếu bạn muốn text-only, loại mọi <img> (giữ nguyên nếu sau này muốn để ảnh)
-const stripImages = (html) => html.replace(/<img[^>]*>/gi, "");
-// Hàm mở file dialog, gọi convert API và set HTML vào state (newHtml)
-async function importDocxTo(setHtml, contentId = "new-content") {
-  return new Promise((resolve) => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".docx";
-    input.onchange = async (e) => {
-      const file = e.target.files?.[0];
-      if (!file) return resolve(false);
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("contentId", contentId);
-      try {
-        const res = await fetch(CONVERT_API, { method: "POST", body: fd });
-        const data = await res.json();
-        if (data?.html) {
-          const html = stripImages(data.html);
-          setHtml(html); // đổ vào ReactQuill
-          resolve(true);
-        } else {
-          alert("Convert lỗi hoặc không có HTML");
-          resolve(false);
-        }
-      } catch (err) {
-        console.error(err);
-        alert("Không gọi được API convert");
-        resolve(false);
-      }
-    };
-    input.click();
-  });
-}
-/* ====== /ADDED ====== */
 
 const ContentViewer = ({ categoryId, titleCategory }) => {
   const [contents, setContents] = useState([]);
@@ -88,6 +52,7 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
   // Giữ inline formats (font/size/bold/...) khi xuống dòng
   const attachEnterKeepsInlineFormats = (quill) => {
     if (!quill) return;
+    // Tránh gắn trùng nhiều lần
     if (quill.__enterKeepInlineBound) return;
     quill.__enterKeepInlineBound = true;
 
@@ -96,16 +61,17 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
       this.quill.insertText(range.index, "\n", "user");
       const newIndex = range.index + 1;
 
+      // Chỉ giữ 1 số inline formats thường dùng
       const keep = ["font", "size", "bold", "italic", "underline", "strike", "color", "background", "code"];
       keep.forEach((k) => {
         if (prevFormats[k]) {
           quill.formatText(newIndex, 0, k, prevFormats[k], "user");
-          quill.format(k, prevFormats[k], "user");
+          quill.format(k, prevFormats[k], "user"); // đồng bộ toolbar
         }
       });
 
       quill.setSelection(newIndex, 0, "silent");
-      return false;
+      return false; // chặn Enter mặc định (đã xử lý)
     });
   };
   useEffect(() => {
@@ -114,7 +80,6 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
     attachEnterKeepsInlineFormats(q1);
     attachEnterKeepsInlineFormats(q2);
   }, [editing, showNewContentForm]);
-
   useEffect(() => {
     if (categoryId) {
       loadContents();
@@ -194,14 +159,21 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
   };
 
   // Upload ảnh mới
+  // Upload ảnh mới
   const handleUpload = async (contentId, file, caption) => {
     if (!file) {
       alert("Vui lòng chọn file trước khi upload!");
       return;
     }
+
     await uploadImage(contentId, file, caption || "image");
     await fetchImages(contentId);
-    setPendingImage((prev) => ({ ...prev, [contentId]: null }));
+
+    // reset state
+    setPendingImage((prev) => ({
+      ...prev,
+      [contentId]: null,
+    }));
   };
 
   // Update ảnh
@@ -210,9 +182,15 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
       alert("Vui lòng chọn file hoặc nhập caption để cập nhật!");
       return;
     }
+
     await updateImage(imageId, contentId, file, caption || "image");
     await fetchImages(contentId);
-    setPendingImage((prev) => ({ ...prev, [contentId]: null }));
+
+    // reset state
+    setPendingImage((prev) => ({
+      ...prev,
+      [contentId]: null,
+    }));
   };
 
   // Move up/down content
@@ -222,7 +200,8 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
     let swapWith = null;
 
     if (direction === "up" && index > 0) swapWith = sorted[index - 1];
-    if (direction === "down" && index < sorted.length - 1) swapWith = sorted[index + 1];
+    if (direction === "down" && index < sorted.length - 1)
+      swapWith = sorted[index + 1];
 
     if (!swapWith) return;
 
@@ -230,6 +209,8 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
     await updateContent(swapWith.id, { order_index: content.order_index });
     await loadContents();
   };
+
+
 
   if (!categoryId) {
     return <p className="p-4 text-gray-500">Please select a category</p>;
@@ -252,21 +233,31 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
                 <button
                   onClick={() => toggleItem(c.id)}
                   className={`px-3 py-1 rounded-md text-sm font-medium transition
-                    ${isOpen ? "bg-blue-200 text-blue-800" : "bg-gray-100 hover:bg-gray-200 text-gray-700"}`}
+                    ${isOpen
+                      ? "bg-blue-200 text-blue-800"
+                      : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                    }`}
                 >
                   {c.title}
                 </button>
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleMove(c, "up")}
-                    disabled={contents.sort((a, b) => a.order_index - b.order_index)[0]?.id === c.id}
+                    disabled={
+                      contents.sort((a, b) => a.order_index - b.order_index)[0]
+                        ?.id === c.id
+                    }
                     className="text-gray-500 hover:text-black text-sm disabled:opacity-30"
                   >
                     ⬆️
                   </button>
                   <button
                     onClick={() => handleMove(c, "down")}
-                    disabled={contents.sort((a, b) => a.order_index - b.order_index).at(-1)?.id === c.id}
+                    disabled={
+                      contents
+                        .sort((a, b) => a.order_index - b.order_index)
+                        .at(-1)?.id === c.id
+                    }
                     className="text-gray-500 hover:text-black text-sm disabled:opacity-30"
                   >
                     ⬇️
@@ -317,7 +308,7 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
                         />
                         Published
                       </label>
-
+                      {/* <ReactQuill value={editHtml} onChange={setEditHtml} /> */}
                       <ReactQuill
                         ref={editQuillRef}
                         theme="snow"
@@ -353,11 +344,17 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
 
                   {/* Quản lý hình ảnh */}
                   <div className="mt-4 border-t pt-3">
-                    <h4 className="font-medium text-gray-800 mb-2">Attached Images</h4>
+                    <h4 className="font-medium text-gray-800 mb-2">
+                      Attached Images
+                    </h4>
 
+                    {/* Danh sách ảnh */}
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
                       {images[c.id]?.map((img) => (
-                        <div key={img.id} className="relative border rounded-lg overflow-hidden group">
+                        <div
+                          key={img.id}
+                          className="relative border rounded-lg overflow-hidden group"
+                        >
                           <img
                             src={`${IMAGE_BASE_URL}${img.image_url}`}
                             alt={img.caption || ""}
@@ -366,12 +363,18 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
                           <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-3">
                             <button
                               onClick={() => {
-                                const fileInput = document.createElement("input");
+                                const fileInput =
+                                  document.createElement("input");
                                 fileInput.type = "file";
                                 fileInput.onchange = async (e) => {
                                   const file = e.target.files[0];
                                   if (file) {
-                                    await updateImage(img.id, c.id, file, img.caption);
+                                    await updateImage(
+                                      img.id,
+                                      c.id,
+                                      file,
+                                      img.caption
+                                    );
                                     await fetchImages(c.id);
                                   }
                                 };
@@ -399,11 +402,15 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
                         </div>
                       ))}
 
+                      {/* Trường hợp chưa có ảnh */}
                       {(!images[c.id] || images[c.id].length === 0) && (
-                        <p className="text-sm text-gray-500 italic">No images uploaded yet.</p>
+                        <p className="text-sm text-gray-500 italic">
+                          No images uploaded yet.
+                        </p>
                       )}
                     </div>
 
+                    {/* Nút thêm ảnh */}
                     <div className="flex justify-start">
                       <button
                         onClick={() => {
@@ -432,7 +439,7 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
           );
         })}
       </div>
-
+      {/* Form thêm content mới */}
       {/* Form thêm content mới */}
       <div className="p-4 rounded bg-white mt-6">
         {showNewContentForm ? (
@@ -453,18 +460,7 @@ const ContentViewer = ({ categoryId, titleCategory }) => {
               Published
             </label>
 
-            {/* ====== (ADDED) Nút Import Word ====== */}
-            <div className="mb-2">
-              <button
-                onClick={() => importDocxTo(setNewHtml, "new-content")}
-                className="px-3 py-1 rounded bg-indigo-600 text-white"
-                title="Chọn file .docx → convert → đổ vào editor"
-              >
-                📄 Import Word
-              </button>
-            </div>
-            {/* ====== /ADDED ====== */}
-
+            {/* <ReactQuill theme="snow" value={newHtml} onChange={setNewHtml} /> */}
             <ReactQuill
               ref={createQuillRef}
               theme="snow"

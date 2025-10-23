@@ -46,12 +46,12 @@ const App = () => {
         )}
 
         {/* Main content area */}
-        {/* <ContentViewer
+        <ContentViewer
           categoryId={activeCategory}
           titleCategory={titleCategory}
-        /> */}
+        />
         {/* Main content area */}
-        {user.role === "admin" ? (
+        {/* {user.role === "admin" ? (
           <AdminContentContainer
             categoryId={activeCategory}
             titleCategory={titleCategory}
@@ -61,7 +61,7 @@ const App = () => {
             categoryId={activeCategory}
             titleCategory={titleCategory}
           />
-        )}
+        )} */}
       </div>
     </div>
   );
