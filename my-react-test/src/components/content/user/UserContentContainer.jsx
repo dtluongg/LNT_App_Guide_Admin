@@ -4,13 +4,14 @@ import React, { useEffect, useState } from "react";
 import { IMAGE_BASE_URL } from "../../../config/config";
 import { contentService } from "../../../services/contentService";
 import { imageService } from "../../../services/imageService";
+import ImageLightbox from "../shared/ImageLightbox";
 
 export default function UserContentContainer({ categoryId, titleCategory }) {
   const [contents, setContents] = useState([]);
   const [openItems, setOpenItems] = useState({});     // nhiều cái mở cùng lúc
   const [images, setImages] = useState({});           // map: contentId -> images[]
 
-  const [preview, setPreview] = useState({ open: false, src: "", caption: "" });
+  const [preview, setPreview] = useState({ open: false, contentId: null, index: 0 });
 
   // load contents (user chỉ xem: lọc published)
   useEffect(() => {
@@ -54,6 +55,20 @@ export default function UserContentContainer({ categoryId, titleCategory }) {
     });
   }
 
+  // Derive current preview info  
+  
+  const currentImages = preview.contentId ? (images[preview.contentId] || []) : [];
+  const current = currentImages[preview.index];
+  const src = current ? `${IMAGE_BASE_URL}${current.image_url}` : "";
+  const caption = current?.caption || "";
+  const hasMany = currentImages.length > 1;
+
+  const closePreview = () => setPreview({ open: false, contentId: null, index: 0 });
+  const onPrev = () =>
+    setPreview((p) => ({ ...p, index: Math.max(0, p.index - 1) }));
+  const onNext = () =>
+    setPreview((p) => ({ ...p, index: Math.min(currentImages.length - 1, p.index + 1) }));
+
   if (!categoryId) {
     return <p className="p-4 text-gray-500">Please select a category</p>;
   }
@@ -92,7 +107,7 @@ export default function UserContentContainer({ categoryId, titleCategory }) {
                     <h4 className="font-medium text-gray-800 mb-2">Attached Images</h4>
 
                     <div className="grid [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))] gap-3 mb-4">
-                      {(images[c.id] || []).map((img) => (
+                      {(images[c.id] || []).map((img, idx) => (
                         <figure key={img.id} className="rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition">
                           <div className="relative w-full aspect-[3/2] md:aspect-[16/9]">
                             <img
@@ -100,13 +115,14 @@ export default function UserContentContainer({ categoryId, titleCategory }) {
                               alt={img.caption || ""}
                               className="absolute inset-0 w-full h-full object-cover cursor-zoom-in"
                               loading="lazy"
-                              onClick={() =>
-                                setPreview({
-                                  open: true,
-                                  src: `${IMAGE_BASE_URL}${img.image_url}`,
-                                  caption: img.caption || "",
-                                })
-                              }
+                              // onClick={() =>
+                              //   setPreview({
+                              //     open: true,
+                              //     src: `${IMAGE_BASE_URL}${img.image_url}`,
+                              //     caption: img.caption || "",
+                              //   })
+                              // }
+                               onClick={() => setPreview({ open: true, contentId: c.id, index: idx })}  // <-- set contentId + index
                             />
                             {img.caption && (
                               <div className="absolute bottom-0 left-0 right-0 bg-black/45 text-white text-[11px] leading-4 px-2 py-1 truncate">
@@ -133,32 +149,40 @@ export default function UserContentContainer({ categoryId, titleCategory }) {
         )}
       </div>
       {preview.open && (
-        <div
-          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
-          onClick={() => setPreview({ open: false, src: "", caption: "" })}
-        >
-          <div
-            className="max-w-[95vw] max-h-[90vh] relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <img
-              src={preview.src}
-              alt={preview.caption}
-              className="w-auto max-w-[95vw] h-auto max-h-[90vh] object-contain"
-            />
-            {preview.caption && (
-              <div className="absolute -bottom-10 left-0 right-0 text-center text-xs text-white/80">
-                {preview.caption}
-              </div>
-            )}
-            <button
-              onClick={() => setPreview({ open: false, src: "", caption: "" })}
-              className="absolute -top-10 right-0 text-white/90 hover:text-white text-sm px-2 py-1 border border-white/40 rounded"
-            >
-              Close ✕
-            </button>
-          </div>
-        </div>
+        // <div
+        //   className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+        //   onClick={() => setPreview({ open: false, src: "", caption: "" })}
+        // >
+        //   <div
+        //     className="max-w-[95vw] max-h-[90vh] relative"
+        //     onClick={(e) => e.stopPropagation()}
+        //   >
+        //     <img
+        //       src={preview.src}
+        //       alt={preview.caption}
+        //       className="w-auto max-w-[95vw] h-auto max-h-[90vh] object-contain"
+        //     />
+        //     {preview.caption && (
+        //       <div className="absolute -bottom-10 left-0 right-0 text-center text-xs text-white/80">
+        //         {preview.caption}
+        //       </div>
+        //     )}
+        //     <button
+        //       onClick={() => setPreview({ open: false, src: "", caption: "" })}
+        //       className="absolute -top-10 right-0 text-white/90 hover:text-white text-sm px-2 py-1 border border-white/40 rounded"
+        //     >
+        //       Close ✕
+        //     </button>
+        //   </div>
+        // </div>
+        <ImageLightbox
+          src={src}
+          caption={caption}
+          onClose={closePreview}
+          showArrows={hasMany}
+          onPrev={onPrev}
+          onNext={onNext}
+        />
       )}
 
     </div>
