@@ -1,0 +1,12 @@
+- tách lại contentviewer thành các component. (xong)
+- Button mũi tên trỏ xuống nên đổi sang cùng hàng với các button crud, thêm bên cạnh bên trái. 
+- Tên nếu dài quá thì sẽ ẩn đi và để … hoặc ẩn bớt đi để không bị phá cấu trúc giao diện.
+- * Update upload ảnh lấy tên file làm caption, sau đó url ảnh là kí tự lung tung, ko lưu theo đường dẫn hay tạo đường dẫn gì nữa. 
+- * Thêm button xem ảnh kế tiếp
+- * Khi click vào category cha thì hiện hết content của các category con. 
+- * Thay vì chỉ search category thì search full content. (Xem content của cái nào thì hiện đường dẫn, click vào đường dẫn là mở category và mở content đó luôn.)
+- * Phân quyền admin user từ backend tới frontend.
+--------------------
+*note: Chưa lưu đc thời gian save mới cho content đc cập nhật. 
+
+***Idea: hiệu ứng màu chạy chạy cho thanh header.

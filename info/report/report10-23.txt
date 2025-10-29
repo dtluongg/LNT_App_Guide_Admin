@@ -1,7 +1,6 @@
 - Thêm import from docx để dễ soạn data. (xong)
-- Tạo backend convert docx to html. 
+- Tạo backend convert docx to html. (xong)
 - tách lại contentviewer thành các component.
-
 - Thiết kế giao diện cho view tên category trên đầu list content. 
 - Button mũi tên trỏ xuống nên đổi sang cùng hàng với các button crud, thêm bên cạnh bên trái. 
 - Tên nếu dài quá thì sẽ ẩn đi và để … hoặc ẩn bớt đi để không bị phá cấu trúc giao diện.
