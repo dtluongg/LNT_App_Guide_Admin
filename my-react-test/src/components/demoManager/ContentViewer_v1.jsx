@@ -10,15 +10,15 @@ import {
   createContent,
   updateContent,
   deleteContent,
-} from "../api/contents";
+} from "../../api/contents";
 import {
   getImagesByContent,
   uploadImage,
   updateImage,
   deleteImage,
-} from "../api/images";
-import { IMAGE_BASE_URL } from "../config/config";
-import { quillModules, quillFormats } from "../config/quillConfigWordLike";
+} from "../../api/images";
+import { IMAGE_BASE_URL } from "../../config/config";
+import { quillModules, quillFormats } from "../../config/quillConfigWordLike";
 
 const ContentViewer = ({ categoryId, titleCategory }) => {
   const [contents, setContents] = useState([]);

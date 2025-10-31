@@ -18,9 +18,10 @@ export default function UserCategoryItem({
   if (isSelected) {
     baseStyle = styles.isSelected;
   } else {
-    if (level === 0) baseStyle = styles.parentColor;
-    else if (level === 1) baseStyle = styles.childColor;
-    else baseStyle = styles.level3Color;
+    if (level === 0) baseStyle = styles.parentColor; // Level 1
+        else if (level === 1) baseStyle = styles.childColor; // Level 2
+        else if (level === 2) baseStyle = styles.level3Color; // Level 3
+        else if (level === 3) baseStyle = styles.level4Color; // Level 4
   }
 
   // ✅ Hàm tô màu phần trùng với search

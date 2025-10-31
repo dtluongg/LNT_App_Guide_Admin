@@ -2,17 +2,17 @@
 // src/components/ContentViewer.jsx
 import React, { useEffect, useState, useRef } from "react";
 import ReactQuill from "react-quill-new";
-import api from "../api/client";
+import api from "../../api/client";
 
 import {
     getContentsByCategory,
     createContent,
     updateContent,
     deleteContent,
-} from "../api/contents";
-import { getImagesByContent, uploadImage, updateImage, deleteImage } from "../api/images";
-import { IMAGE_BASE_URL } from "../config/config";
-import { quillModules, quillFormats } from "../config/quillConfigWordLike";
+} from "../../api/contents";
+import { getImagesByContent, uploadImage, updateImage, deleteImage } from "../../api/images";
+import { IMAGE_BASE_URL } from "../../config/config";
+import { quillModules, quillFormats } from "../../config/quillConfigWordLike";
 
 /* ====== (ADDED) Cấu hình API convert DOCX -> HTML ====== */
 const CONVERT_API = `${IMAGE_BASE_URL}/api/convert`; // đổi nếu backend convert của bạn khác

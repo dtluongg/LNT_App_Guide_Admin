@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Navbar from "./components/Navbar";
-import ContentViewer from "./components/ContentViewer";
+import ContentViewer from "./components/demoManager/ContentViewer";
 import AdminContentContainer from "./components/content/admin/AdminContentContainer";
 import UserContentContainer from "./components/content/user/UserContentContainer";
 
@@ -15,7 +15,21 @@ const App = () => {
   const [activeModule, setActiveModule] = useState(null);
   const [activeCategory, setActiveCategory] = useState(null);
   const [titleCategory, setTitleCategory] = useState("");
-
+  // useEffect(() => {
+  //   // Khi reload, nếu có token → gọi API /api/auth/me để lấy user
+  //   const token = localStorage.getItem("accessToken");
+  //   if (token) {
+  //     fetch("http://localhost:4000/api/auth/me", {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     })
+  //       .then((res) => res.json())
+  //       .then((data) => {
+  //         if (data.success) setUser(data.user);
+  //         else localStorage.removeItem("accessToken");
+  //       })
+  //       .catch(() => localStorage.removeItem("accessToken"));
+  //   }
+  // }, []);
   // Nếu chưa login → hiển thị form login
   if (!user) {
     return <Login onLogin={setUser} />;
@@ -28,7 +42,7 @@ const App = () => {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar category: chọn theo role */}
-        {user.role === "admin" ? (
+        {user.role === "admin" || user.role === "manager" ? (
           <AdminCategoryContainer
             moduleId={activeModule?.id}
             onSelectCategory={setActiveCategory}
@@ -51,7 +65,7 @@ const App = () => {
           titleCategory={titleCategory}
         /> */}
         {/* Main content area */}
-        {user.role === "admin" ? (
+        {user.role === "admin" || user.role === "manager" ? (
           <AdminContentContainer
             categoryId={activeCategory}
             titleCategory={titleCategory}

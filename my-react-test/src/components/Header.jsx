@@ -10,7 +10,7 @@ const Header = ({ user }) => {
           alt="Company Logo"
           className="w-10 h-10"
         />
-        <span className="text-xl font-bold">Book Guide by LNT Company</span>
+        <span className="text-xl font-bold">App Guide by LNT Company</span>
       </div>
 
       {/* User info + login/logout */}

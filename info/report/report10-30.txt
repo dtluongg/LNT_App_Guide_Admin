@@ -1,0 +1,17 @@
+- Button mũi tên trỏ xuống nên đổi sang cùng hàng với các button crud, thêm bên cạnh bên trái. 
+- Tên nếu dài quá thì sẽ ẩn đi và để … hoặc ẩn bớt đi để không bị phá cấu trúc giao diện.
+- * Update upload ảnh lấy tên file làm caption, sau đó url ảnh là kí tự lung tung, ko lưu theo đường dẫn hay tạo đường dẫn gì nữa. (xong)
+- * Khi xoá content thì xoá luôn image của content đó trong backend
+- * khi xoá image thì xoá luôn image trong backend
+- * Thêm button xem ảnh kế tiếp (xong)
+- * Khi click vào category cha thì hiện hết content của các category con. 
+- * Thay vì chỉ search category thì search full content. (Xem content của cái nào thì hiện đường dẫn, click vào đường dẫn là mở category và mở content đó luôn.)
+- * Phân quyền admin user từ backend tới frontend.
+--------------------
+*note: Chưa lưu đc thời gian save mới cho content đc cập nhật. 
+
+***Idea: hiệu ứng màu chạy chạy cho thanh header.
+
+
+solution 1: Bây giờ tôi muốn cập nhật lại image khi upload sẽ vào hết file upload, không cần phân cấp và lưu theo thư mục tên category nữa. Khi import image sẽ tự tách tên file làm caption.  
+solution 2: Bây giờ tôi muốn cập nhật thêm security cho login. Hãy liệt kê cho tôi biết những gì cần làm và hướng dẫn tôi làm từng bước. 
